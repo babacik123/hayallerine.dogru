@@ -275,7 +275,7 @@
             document.getElementById('seconds').textContent = seconds;
         }
         
-        // Not ekleme fonksiyonu
+        // YENİ NOT EKLEME FONKSİYONU
         async function addNote(user) {
             const textareaId = user === 'Kız Arkadaşı' ? 'girlfriendNote' : 'boyfriendNote';
             const noteText = document.getElementById(textareaId).value.trim();
@@ -292,30 +292,22 @@
                 minute: '2-digit' 
             });
             
-            // Google Sheets'e veri gönder
+            // YENİ YÖNTEM - URL parametreleri ile
+            const url = SCRIPT_URL + '?action=addNote&date=' + encodeURIComponent(dateString) + 
+                        '&time=' + encodeURIComponent(timeString) + 
+                        '&user=' + encodeURIComponent(user) + 
+                        '&note=' + encodeURIComponent(noteText);
+            
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'addNote',
-                        date: dateString,
-                        time: timeString,
-                        user: user,
-                        note: noteText
-                    })
-                });
-                
+                const response = await fetch(url);
                 const result = await response.json();
                 
                 if (result.success) {
                     document.getElementById(textareaId).value = '';
                     alert('Notunuz kaydedildi! 🎉');
-                    loadAllNotes(); // Notları yenile
+                    loadAllNotes();
                 } else {
-                    alert('Not kaydedilemedi, lütfen tekrar deneyin.');
+                    alert('Not kaydedilemedi: ' + (result.error || 'Bilinmeyen hata'));
                 }
             } catch (error) {
                 alert('Bağlantı hatası! Not kaydedilemedi.');
