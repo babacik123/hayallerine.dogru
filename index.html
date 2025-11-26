@@ -1,1 +1,370 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sınav Geri Sayım & Notlarımız</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 20px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .countdown-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        #countdown {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+            min-width: 100px;
+        }
+        
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            display: block;
+        }
+        
+        .countdown-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .notes-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .notes-column {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+        
+        .notes-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .note-form {
+            margin-bottom: 25px;
+        }
+        
+        textarea {
+            width: 100%;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            resize: vertical;
+            font-size: 1rem;
+            color: #333;
+        }
+        
+        button {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+        }
+        
+        .notes-list {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        
+        .note-item {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #ff6b6b;
+        }
+        
+        .girlfriend-note {
+            border-left-color: #ff6b6b;
+        }
+        
+        .boyfriend-note {
+            border-left-color: #4facfe;
+        }
+        
+        .note-date {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        
+        .note-user {
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .note-text {
+            font-size: 1rem;
+            line-height: 1.4;
+        }
+        
+        .refresh-btn {
+            background: #4facfe;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .notes-container {
+                grid-template-columns: 1fr;
+            }
+            
+            #countdown {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Sınav Geri Sayımı</h1>
+            <p>Başarıya giden yolda birlikteyiz! 💕</p>
+        </header>
+        
+        <div class="countdown-container">
+            <h2>Sınava Kalan Süre</h2>
+            <div id="countdown">
+                <div class="countdown-box">
+                    <span class="countdown-number" id="days">0</span>
+                    <span class="countdown-label">Gün</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="hours">0</span>
+                    <span class="countdown-label">Saat</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="minutes">0</span>
+                    <span class="countdown-label">Dakika</span>
+                </div>
+                <div class="countdown-box">
+                    <span class="countdown-number" id="seconds">0</span>
+                    <span class="countdown-label">Saniye</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="notes-container">
+            <!-- Kız Arkadaşının Notları -->
+            <div class="notes-column">
+                <div class="notes-header">
+                    <h2>👸 Kız Arkadaşının Notları</h2>
+                </div>
+                <div class="note-form">
+                    <textarea id="girlfriendNote" placeholder="Buraya notunu yaz... 💖"></textarea>
+                    <button onclick="addNote('Kız Arkadaşı')">Notumu Kaydet</button>
+                </div>
+                <div class="notes-list" id="girlfriendNotes">
+                    <!-- Notlar buraya eklenecek -->
+                </div>
+            </div>
+            
+            <!-- Senin Notların -->
+            <div class="notes-column">
+                <div class="notes-header">
+                    <h2>🤵 Senin Notların</h2>
+                </div>
+                <div class="note-form">
+                    <textarea id="boyfriendNote" placeholder="Buraya notunu yaz... 💪"></textarea>
+                    <button onclick="addNote('Sevgilin')">Notumu Kaydet</button>
+                </div>
+                <div class="notes-list" id="boyfriendNotes">
+                    <!-- Notlar buraya eklenecek -->
+                </div>
+            </div>
+        </div>
 
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="refresh-btn" onclick="loadAllNotes()">📨 Notları Güncelle</button>
+            <p style="margin-top: 10px; opacity: 0.8;">Not ekledikten sonra bu butona basarak diğer notları görün</p>
+        </div>
+    </div>
+
+    <script>
+        // GERİ SAYIM TARİHİ - 6 Eylül 2026
+        const examDate = new Date(2026, 8, 6, 9, 0, 0);
+        
+        // Google Apps Script URL'si - Bunu sonra alacağız
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwYOUR_SCRIPT_ID_HERE/exec';
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = examDate - now;
+            
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = 
+                    '<h2>🎉 Sınav Tamamlandı! Tebrikler! 🎉</h2>';
+                return;
+            }
+            
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
+        }
+        
+        // Not ekleme fonksiyonu
+        async function addNote(user) {
+            const textareaId = user === 'Kız Arkadaşı' ? 'girlfriendNote' : 'boyfriendNote';
+            const noteText = document.getElementById(textareaId).value.trim();
+            
+            if (noteText === '') {
+                alert('Lütfen bir not yazın!');
+                return;
+            }
+            
+            const now = new Date();
+            const dateString = now.toLocaleDateString('tr-TR');
+            const timeString = now.toLocaleTimeString('tr-TR', { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            });
+            
+            // Google Sheets'e veri gönder
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'addNote',
+                        date: dateString,
+                        time: timeString,
+                        user: user,
+                        note: noteText
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById(textareaId).value = '';
+                    alert('Notunuz kaydedildi! 🎉');
+                    loadAllNotes(); // Notları yenile
+                } else {
+                    alert('Not kaydedilemedi, lütfen tekrar deneyin.');
+                }
+            } catch (error) {
+                alert('Bağlantı hatası! Not kaydedilemedi.');
+                console.error('Error:', error);
+            }
+        }
+        
+        // Tüm notları yükle
+        async function loadAllNotes() {
+            try {
+                const response = await fetch(SCRIPT_URL + '?action=getNotes');
+                const notes = await response.json();
+                
+                // Notları temizle
+                document.getElementById('girlfriendNotes').innerHTML = '';
+                document.getElementById('boyfriendNotes').innerHTML = '';
+                
+                // Notları ekle
+                notes.forEach(note => {
+                    const noteItem = document.createElement('div');
+                    noteItem.className = `note-item ${note.user === 'Kız Arkadaşı' ? 'girlfriend-note' : 'boyfriend-note'}`;
+                    noteItem.innerHTML = `
+                        <div class="note-date">${note.date} ${note.time}</div>
+                        <div class="note-user">${note.user}</div>
+                        <div class="note-text">${note.note}</div>
+                    `;
+                    
+                    if (note.user === 'Kız Arkadaşı') {
+                        document.getElementById('girlfriendNotes').prepend(noteItem);
+                    } else {
+                        document.getElementById('boyfriendNotes').prepend(noteItem);
+                    }
+                });
+            } catch (error) {
+                console.error('Notlar yüklenemedi:', error);
+            }
+        }
+        
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            loadAllNotes();
+            updateCountdown();
+            
+            // Otomatik yenileme (30 saniyede bir)
+            setInterval(loadAllNotes, 30000);
+        });
+        
+        // Geri sayımı her saniye güncelle
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
